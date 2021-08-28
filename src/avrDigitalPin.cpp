@@ -62,16 +62,23 @@ avrDigitalPin::avrDigitalPin(pinName_t pinNumber,
 // Set the pin state to high or low.
 void avrDigitalPin::setState(pinState_t pinState)
 {
-    if (_isOutput)
+    if (!_isOutput)
+        return;
+
+    if (pinState)
         *_port |= (1 << _bitMask);
+    else
+        *_port &= ~(1 << _bitMask);
 }
 
 
 // Toggle the current pin state.
 void avrDigitalPin::toggleState()
 {
-    if (_isOutput)
-        *_pin |= (1 << _bitMask);
+    if (!_isOutput)
+        return;
+        
+    *_pin |= (1 << _bitMask);
 }
 
 
@@ -80,5 +87,5 @@ void avrDigitalPin::toggleState()
 // Read the pin state.
 pinState_t avrDigitalPin::getState()
 {
-    return (pinState_t)(*_pin & (1 << _bitMask));
+    return (pinState_t)(!!(*_pin & (1 << _bitMask)));
 }
